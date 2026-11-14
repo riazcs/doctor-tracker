@@ -16,15 +16,26 @@ const schema = z.object({
 });
 
 const parsed = schema.safeParse(process.env);
-if (!parsed.success) {
+
+/** Problems with the environment, e.g. "JWT_SECRET: …". Names and rules only, never values. */
+export const configErrors = parsed.success
+  ? []
+  : parsed.error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`);
+
+if (configErrors.length) {
   console.error('Invalid environment configuration:');
-  for (const issue of parsed.error.issues) console.error(`  - ${issue.path.join('.')}: ${issue.message}`);
-  process.exit(1);
+  for (const e of configErrors) console.error(`  - ${e}`);
+  // A long-running server should refuse to start. On Vercel, exiting only produces an opaque
+  // FUNCTION_INVOCATION_FAILED page, so keep running and let app.ts report the problem instead.
+  if (!process.env.VERCEL) process.exit(1);
 }
 
+// When config is invalid (Vercel only), app.ts rejects every request before any of these are used.
+const data = (parsed.success ? parsed.data : schema.partial().parse({})) as z.infer<typeof schema>;
+
 export const env = {
-  ...parsed.data,
-  isProd: parsed.data.NODE_ENV === 'production',
-  corsOrigins: parsed.data.CORS_ORIGIN.split(',').map((o) => o.trim()).filter(Boolean),
+  ...data,
+  isProd: process.env.NODE_ENV === 'production',
+  corsOrigins: (data.CORS_ORIGIN ?? '').split(',').map((o) => o.trim()).filter(Boolean),
   cookieName: 'dt_session',
 };

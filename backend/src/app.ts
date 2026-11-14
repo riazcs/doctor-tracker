@@ -5,12 +5,26 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { connectDB } from './config/db.js';
-import { env } from './config/env.js';
+import { configErrors, env } from './config/env.js';
 import { errorHandler, notFound } from './middleware/error.js';
 import { apiRouter } from './routes/index.js';
 
 export function createApp({ lazyDB = false } = {}) {
   const app = express();
+
+  if (configErrors.length) {
+    // Only reachable on Vercel (elsewhere env.ts exits). Say what is missing instead of crashing.
+    app.use((_req, res) => {
+      res.status(500).json({
+        error: {
+          code: 'CONFIG_ERROR',
+          message: 'Server environment variables are missing or invalid. Set them in Vercel → Settings → Environment Variables, then redeploy.',
+          details: configErrors,
+        },
+      });
+    });
+    return app;
+  }
 
   app.set('trust proxy', 1);
   app.disable('x-powered-by');
