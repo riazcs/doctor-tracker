@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Components use semantic roles (bg-surface, text-muted, border-line…)
+ * so light/dark is swapped in one place. Neutrals and chart colors follow a single
+ * validated palette (see src/components/charts/palette.ts).
+ */
+:root {
+  color-scheme: light;
+  --bg: #f6f6f3;
+  --surface: #fdfdfc;
+  --surface-2: #f1f0ec;
+  --line: #e4e3dc;
+  --line-strong: #cfcdc4;
+  --fg: #111110;
+  --fg-2: #52514e;
+  --muted: #7d7b75;
+  --primary: #256abf;
+  --primary-hover: #1c5cab;
+  --primary-fg: #ffffff;
+  --primary-soft: #e6effb;
+  --primary-soft-fg: #1c5cab;
+  --danger: #c23434;
+  --danger-soft: #fbeaea;
+  --success: #0a7a2f;
+  --success-soft: #e5f4ea;
+  --warning: #9a6200;
+  --warning-soft: #fdf3dc;
+  --ring: rgb(37 106 191 / 0.35);
+  --shadow: 0 1px 2px rgb(17 17 16 / 0.04), 0 1px 3px rgb(17 17 16 / 0.06);
+  --shadow-lg: 0 12px 32px -8px rgb(17 17 16 / 0.18), 0 2px 6px rgb(17 17 16 / 0.06);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f0f0e;
+  --surface: #1a1a19;
+  --surface-2: #232321;
+  --line: #2c2c2a;
+  --line-strong: #3d3d3a;
+  --fg: #f0efec;
+  --fg-2: #c3c2b7;
+  --muted: #8f8d86;
+  --primary: #3987e5;
+  --primary-hover: #5598e7;
+  --primary-fg: #ffffff;
+  --primary-soft: #182a42;
+  --primary-soft-fg: #86b6ef;
+  --danger: #e66767;
+  --danger-soft: #3a1b1b;
+  --success: #3fbf5c;
+  --success-soft: #16301d;
+  --warning: #e9b04a;
+  --warning-soft: #33280f;
+  --ring: rgb(57 135 229 / 0.45);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 16px 40px -8px rgb(0 0 0 / 0.6);
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-fg: var(--primary-fg);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-soft-fg: var(--primary-soft-fg);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --shadow-card: var(--shadow);
+  --shadow-pop: var(--shadow-lg);
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+dialog::backdrop {
+  background: rgb(10 10 10 / 0.45);
+  backdrop-filter: blur(2px);
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-pop-in { animation: pop-in 160ms ease-out; }
+.animate-fade-in { animation: fade-in 200ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Native date input icon follows theme */
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); }
