@@ -1,4 +1,5 @@
 import type { CookieOptions, Request, Response } from 'express';
+import type {} from '../types/express.js'; // adds req.user to Express's Request type
 import { env } from '../config/env.js';
 import * as authService from '../services/auth.service.js';
 import { parse } from '../utils/validate.js';

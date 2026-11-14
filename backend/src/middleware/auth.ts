@@ -1,4 +1,5 @@
 import type { RequestHandler } from 'express';
+import type {} from '../types/express.js'; // adds req.user to Express's Request type
 import { env } from '../config/env.js';
 import type { Role } from '../models/User.js';
 import { ApiError } from '../utils/ApiError.js';
