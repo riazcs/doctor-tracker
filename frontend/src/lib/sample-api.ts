@@ -31,8 +31,23 @@ export function sampleResponse(request: Request): Response {
     status, headers: { 'cache-control': 'no-store', 'x-data-mode': 'sample' },
   });
   const error = (status: number, code: string, message: string) => json({ error: { code, message } }, status);
+  // Enter the public preview without treating submitted credentials as authenticated.
+  // A configured backend handles real login before this sample handler is reached.
+  if (request.method === 'POST' && path === 'auth/login') {
+    return json({ data: viewer, mode: 'sample' });
+  }
+  if (request.method === 'POST' && path === 'auth/logout') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'cache-control': 'no-store',
+        'x-data-mode': 'sample',
+        'set-cookie': 'dt_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0',
+      },
+    });
+  }
   if (request.method !== 'GET' && request.method !== 'HEAD') {
-    return error(403, 'SAMPLE_READ_ONLY', 'Sample preview is read-only. Connect a backend to sign in or save changes.');
+    return error(403, 'SAMPLE_READ_ONLY', 'Sample preview is read-only. Connect a backend to save changes.');
   }
   if (path === 'auth/me') return json({ data: viewer });
   if (path === 'health') return json({ status: 'sample', db: 'not-connected' });
