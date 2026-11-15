@@ -1,6 +1,7 @@
 export type Role = 'admin' | 'viewer';
 
 export interface User {
+  sample?: boolean;
   id: string;
   name: string;
   email: string;

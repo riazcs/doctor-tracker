@@ -88,6 +88,7 @@ function ThemeToggle() {
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const { user } = useCurrentUser();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const pathname = usePathname();
 
@@ -152,7 +153,14 @@ export function AppShell({ children }: { children: ReactNode }) {
       )}
 
       <main id="main" className="min-w-0 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
-        <div className="mx-auto max-w-[1400px]">{children}</div>
+        <div className="mx-auto max-w-[1400px]">
+          {user?.sample && (
+            <div role="status" className="mb-6 rounded-xl border border-line bg-primary-soft p-4 text-sm text-primary-soft-fg">
+              <strong>Sample preview · Read-only.</strong> All doctors, patients, and analytics are fictional. Changes are disabled until a backend is connected.
+            </div>
+          )}
+          {children}
+        </div>
       </main>
     </div>
   );
