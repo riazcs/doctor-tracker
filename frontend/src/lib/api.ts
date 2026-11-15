@@ -1,6 +1,6 @@
 /**
- * Thin fetch wrapper. All calls go to same-origin `/api/*`, which Next rewrites to the
- * Express server (see next.config.ts) — so the httpOnly session cookie is first-party
+ * Thin fetch wrapper. All calls go to same-origin `/api/*`, whose server route proxies to
+ * the Express server — so the httpOnly session cookie is first-party
  * and no token ever touches JavaScript.
  */
 export interface FieldError {

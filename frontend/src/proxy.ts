@@ -1,5 +1,6 @@
 import { jwtVerify } from 'jose';
 import { NextResponse, type NextRequest } from 'next/server';
+import { backendUrl } from '@/lib/backend-config';
 
 /**
  * Route protection (first line of defence — the API enforces auth on every request too).
@@ -22,6 +23,13 @@ async function isValidSession(token?: string) {
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+  // This public preview serves fictional records only; a configured backend keeps normal auth.
+  if (!backendUrl(request.url)) {
+    if (pathname === '/' || pathname === '/login') {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+    return NextResponse.next();
+  }
   const authed = await isValidSession(request.cookies.get(COOKIE)?.value);
   const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
 
